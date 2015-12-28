@@ -150,22 +150,41 @@ brew_install_or_upgrade 'node'
 brew_install_or_upgrade 'rbenv'
 brew_install_or_upgrade 'ruby-build'
 
+brew_install_or_upgrade 'pyenv'
+brew_install_or_upgrade 'nodenv'
+
 # shellcheck disable=SC2016
 append_to_zshrc 'eval "$(rbenv init - --no-rehash zsh)"' 1
+append_to_zshrc 'eval "$(pyenv init -)"'
+append_to_zshrc 'eval "$(nodenv init -)"'
 
 brew_install_or_upgrade 'openssl'
 brew unlink openssl && brew link openssl --force
 brew_install_or_upgrade 'libyaml'
 
-ruby_version="$(curl -sSL http://ruby.thoughtbot.com/latest)"
+ruby_version="$(rbenv install -l | grep -v - | tail -1)"
+python2_version="$(pyenv install -l | grep -E '^\s*2\.(\d+\.?)+$' | tail -1)"
+python3_version="$(pyenv install -l | grep -E '^\s*(\d+\.?)+$' | tail -1)"
+node_version="$(nodenv install -l | grep -e '^\s*\d\.' | tail -1)"
 
 eval "$(rbenv init - zsh)"
 
 if ! rbenv versions | grep -Fq "$ruby_version"; then
   rbenv install -s "$ruby_version"
 fi
+if ! pyenv versions | grep -Fq "$python2_version"; then
+  pyenv install -s "$ruby_version"
+fi
+if ! pyenv versions | grep -Fq "$python3_version"; then
+  pyenv install -s "$ruby_version"
+fi
+if ! nodenv versions | grep -Fq "$node_version"; then
+  nodenv install -s "$ruby_version"
+fi
 
 rbenv global "$ruby_version"
+nodenv global "$node_version"
+pyenv global "$python2_version"
 rbenv shell "$ruby_version"
 
 gem update --system
@@ -186,3 +205,8 @@ fi
 if [ -f "$HOME/.laptop.local" ]; then
   . "$HOME/.laptop.local"
 fi
+
+git clone https://github.com/leekiernan/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles && ./script/bootstrap -O
+
+
