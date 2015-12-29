@@ -149,18 +149,17 @@ brew_install_or_upgrade 'node'
 
 brew_install_or_upgrade 'rbenv'
 brew_install_or_upgrade 'ruby-build'
-
 brew_install_or_upgrade 'pyenv'
 brew_install_or_upgrade 'nodenv'
+
+brew_install_or_upgrade 'openssl'
+brew unlink openssl && brew link openssl --force
+brew_install_or_upgrade 'libyaml'
 
 # shellcheck disable=SC2016
 append_to_zshrc 'eval "$(rbenv init - --no-rehash zsh)"' 1
 append_to_zshrc 'eval "$(pyenv init -)"'
 append_to_zshrc 'eval "$(nodenv init -)"'
-
-brew_install_or_upgrade 'openssl'
-brew unlink openssl && brew link openssl --force
-brew_install_or_upgrade 'libyaml'
 
 ruby_version="$(rbenv install -l | grep -v - | tail -1)"
 python2_version="$(pyenv install -l | grep -E '^\s*2\.(\d+\.?)+$' | tail -1)"
@@ -202,11 +201,10 @@ if ! command -v rcup >/dev/null; then
   brew_install_or_upgrade 'rcm'
 fi
 
-if [ -f "$HOME/.laptop.local" ]; then
-  . "$HOME/.laptop.local"
-fi
-
 git clone https://github.com/leekiernan/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles && ./script/bootstrap -O
 
+if [ -f "$HOME/.laptop.local" ]; then
+  . "$HOME/.laptop.local"
+fi
 
