@@ -138,7 +138,7 @@ EOF
 
 fancy_echo "Configuring rb/py/node env ..."
 
-ruby_version="$(rbenv install -l | grep -v - | tail -1 | sed -e 's/^ *//')"
+ruby_version="$(rbenv install --list-all | grep -v - | tail -1 | sed -e 's/^ *//')"
 python2_version="$(pyenv install -l | grep -E '^\s*2\.(\d+\.?)+$' | tail -1)"
 python3_version="$(pyenv install -l | grep -E '^\s*(\d+\.?)+$' | tail -1)"
 node_version="$(nodenv install -l | grep -e '^\s*\d\.' | tail -1)"
